@@ -7,17 +7,16 @@ class ResidualBlock(nn.Module):
     def __init__(self, channels):
         super().__init__()
         self.block = nn.Sequential(
-            nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=0),
+            nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(channels),
             nn.ReLU(inplace=True),
 
-            nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=0),
+            nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(channels),
         )
 
     def forward(self, x):
-        cropped = x[:, :, 1:-1, 1:-1]
-        return self.block(x) + cropped
+        return x + self.block(x)
 
 
 # Generator
