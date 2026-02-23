@@ -13,13 +13,17 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 BATCH_SIZE = 1
 LR = 2e-4
-EPOCHS = 100
+EPOCHS = 20
 
 WEIGHT_CYCLE = 10
 WEIGHT_IDENTITY = 5
 
 SAVE_DIR = "cyclegan_models"
 os.makedirs(SAVE_DIR, exist_ok=True)
+
+#RESUME_PATH = None
+RESUME_PATH = os.path.join(SAVE_DIR, "cyclegan_10.pth")
+START_EPOCH = 0
 
 
 # Initialize model
@@ -34,6 +38,26 @@ D_painting_params = model.D_painting.parameters()
 optimizer_G = optim.Adam(G_params, lr=LR, betas=(0.5, 0.999))
 optimizer_D_photo = optim.Adam(D_photo_params, lr=LR, betas=(0.5, 0.999))
 optimizer_D_painting = optim.Adam(D_painting_params, lr=LR, betas=(0.5, 0.999))
+
+# Resume training
+if RESUME_PATH is not None and os.path.exists(RESUME_PATH):
+    checkpoint = torch.load(RESUME_PATH, map_location=DEVICE)
+    
+    # Load model weights
+    model.G_photo_to_painting.load_state_dict(checkpoint['G_photo_to_painting'])
+    model.G_painting_to_photo.load_state_dict(checkpoint['G_painting_to_photo'])
+    model.D_photo.load_state_dict(checkpoint['D_photo'])
+    model.D_painting.load_state_dict(checkpoint['D_painting'])
+    
+    # Load optimizer states
+    optimizer_G.load_state_dict(checkpoint['optimizer_G'])
+    optimizer_D_photo.load_state_dict(checkpoint['optimizer_D_photo'])
+    optimizer_D_painting.load_state_dict(checkpoint['optimizer_D_painting'])
+    
+    START_EPOCH = checkpoint['epoch'] + 1
+    print(f"Resuming training from epoch {START_EPOCH}")
+else:
+    print("Starting training from scratch")
 
 
 # Loss functions
@@ -61,7 +85,7 @@ val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
 
 # Training Loop
-for epoch in range(EPOCHS):
+for epoch in range(START_EPOCH, EPOCHS):
 
     model.train()
 
@@ -175,12 +199,21 @@ for epoch in range(EPOCHS):
     print(f"  Generator Loss: {total_G_loss/len(train_loader):.4f}")
     print(f"  Discriminator Loss: {total_D_loss/len(train_loader):.4f}")
     print(f"  Val Cycle Loss: {val_cycle_loss/len(val_loader):.4f}")
-    print("-" * 30)
 
     # Save checkpoint
     if (epoch + 1) % 10 == 0:
-        save_path = os.path.join(
-            SAVE_DIR,
-            f"cyclegan_{epoch+1}.pth"
-        )
-        torch.save(model.state_dict(), save_path)
+        save_path = os.path.join(SAVE_DIR, f"cyclegan_{epoch+1}.pth")
+    
+        checkpoint = {
+            'epoch': epoch,
+            'G_photo_to_painting': model.G_photo_to_painting.state_dict(),
+            'G_painting_to_photo': model.G_painting_to_photo.state_dict(),
+            'D_photo': model.D_photo.state_dict(),
+            'D_painting': model.D_painting.state_dict(),
+            'optimizer_G': optimizer_G.state_dict(),
+            'optimizer_D_photo': optimizer_D_photo.state_dict(),
+            'optimizer_D_painting': optimizer_D_painting.state_dict()
+        }    
+        torch.save(checkpoint, save_path)
+        print(f"Checkpoint saved at {save_path}")
+    print("-" * 30)

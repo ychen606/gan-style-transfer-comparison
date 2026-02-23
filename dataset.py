@@ -93,7 +93,7 @@ def get_train_transforms():
 
 def get_test_transforms():
     return transforms.Compose([
-        transforms.Resize(256),
+        transforms.Resize((256, 256)),
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5),
                              (0.5, 0.5, 0.5)),

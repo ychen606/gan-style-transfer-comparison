@@ -26,11 +26,11 @@ class Generator(nn.Module):
 
         self.model = nn.Sequential(
 
-            # Reflection padding (40 x 40)
-            nn.ReflectionPad2d(40),
+            # Reflection padding
+            nn.ReflectionPad2d(3),
 
-            # 32 x 9 x 9 conv, stride 1
-            nn.Conv2d(3, 32, kernel_size=9, stride=1, padding=0),
+            # 32 x 7 x 7 conv, stride 1
+            nn.Conv2d(3, 32, kernel_size=7, stride=1, padding=0),
             nn.BatchNorm2d(32),
             nn.ReLU(inplace=True),
 
