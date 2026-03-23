@@ -8,11 +8,11 @@ class ResidualBlock(nn.Module):
         super().__init__()
         self.block = nn.Sequential(
             nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(channels),
+            nn.InstanceNorm2d(channels),
             nn.ReLU(inplace=True),
 
             nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(channels),
+            nn.InstanceNorm2d(channels),
         )
 
     def forward(self, x):
@@ -31,36 +31,40 @@ class Generator(nn.Module):
 
             # 32 x 7 x 7 conv, stride 1
             nn.Conv2d(3, 32, kernel_size=7, stride=1, padding=0),
-            nn.BatchNorm2d(32),
+            nn.InstanceNorm2d(32),
             nn.ReLU(inplace=True),
 
             # 64 x 3 x 3 conv, stride 2
             nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),
-            nn.BatchNorm2d(64),
+            nn.InstanceNorm2d(64),
             nn.ReLU(inplace=True),
 
             # 128 x 3 x 3 conv, stride 2
             nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1),
-            nn.BatchNorm2d(128),
+            nn.InstanceNorm2d(128),
             nn.ReLU(inplace=True),
 
-            # 5 residual blocks (128 filters)
+            # 9 residual blocks (128 filters)
+            ResidualBlock(128),
+            ResidualBlock(128),
+            ResidualBlock(128),
+            ResidualBlock(128),
             ResidualBlock(128),
             ResidualBlock(128),
             ResidualBlock(128),
             ResidualBlock(128),
             ResidualBlock(128),
 
-            # 64 x 3 x 3 conv, stride 1/2
-            nn.ConvTranspose2d(128, 64, kernel_size=3,
-                               stride=2, padding=1, output_padding=1),
-            nn.BatchNorm2d(64),
+            # 64 x 4 x 4 conv, stride 1/2
+            nn.ConvTranspose2d(128, 64, kernel_size=4,
+                               stride=2, padding=1, output_padding=0),
+            nn.InstanceNorm2d(64),
             nn.ReLU(inplace=True),
 
-            # 32 x 3 x 3 conv, stride 1/2
-            nn.ConvTranspose2d(64, 32, kernel_size=3,
-                               stride=2, padding=1, output_padding=1),
-            nn.BatchNorm2d(32),
+            # 32 x 4 x 4 conv, stride 1/2
+            nn.ConvTranspose2d(64, 32, kernel_size=4,
+                               stride=2, padding=1, output_padding=0),
+            nn.InstanceNorm2d(32),
             nn.ReLU(inplace=True),
 
             # 3 x 9 x 9 conv, stride 1

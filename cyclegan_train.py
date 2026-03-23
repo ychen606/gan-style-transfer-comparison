@@ -13,16 +13,16 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 BATCH_SIZE = 1
 LR = 2e-4
-EPOCHS = 20
+EPOCHS = 50
 
 WEIGHT_CYCLE = 10
-WEIGHT_IDENTITY = 5
+WEIGHT_IDENTITY = 0.5
 
 SAVE_DIR = "cyclegan_models"
 os.makedirs(SAVE_DIR, exist_ok=True)
 
 #RESUME_PATH = None
-RESUME_PATH = os.path.join(SAVE_DIR, "cyclegan_10.pth")
+RESUME_PATH = os.path.join(SAVE_DIR, "cyclegan_30.pth")
 START_EPOCH = 0
 
 
