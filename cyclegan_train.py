@@ -21,8 +21,8 @@ WEIGHT_IDENTITY = 0.5
 SAVE_DIR = "cyclegan_models"
 os.makedirs(SAVE_DIR, exist_ok=True)
 
-#RESUME_PATH = None
-RESUME_PATH = os.path.join(SAVE_DIR, "cyclegan_30.pth")
+RESUME_PATH = None
+#RESUME_PATH = os.path.join(SAVE_DIR, "cyclegan_30.pth")
 START_EPOCH = 0
 
 

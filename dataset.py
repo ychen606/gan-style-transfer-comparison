@@ -10,7 +10,7 @@ from torchvision import transforms
 # Dataset
 class GANDataset(Dataset):
     def __init__(self, root_dir="data", mode="train",
-                 transform=None, val_ratio=0.1, seed=2026):
+                 transform=None, val_ratio=0.1, seed=2026, random_pair=True):
         """
         Folder structure:
 
@@ -28,6 +28,7 @@ class GANDataset(Dataset):
 
         super().__init__()
         self.transform = transform
+        self.random_pair = random_pair
         random.seed(seed)
 
         if mode == "test":
@@ -66,8 +67,12 @@ class GANDataset(Dataset):
                    len(self.painting_paths))
 
     def __getitem__(self, index):
-        photo_path = random.choice(self.photo_paths)
-        painting_path = random.choice(self.painting_paths)
+        if self.random_pair:
+            photo_path = random.choice(self.photo_paths)
+            painting_path = random.choice(self.painting_paths)
+        else:
+            photo_path = self.photo_paths[index % len(self.photo_paths)]
+            painting_path = self.painting_paths[index % len(self.painting_paths)]
 
         photo_img = Image.open(photo_path).convert("RGB")
         painting_img = Image.open(painting_path).convert("RGB")

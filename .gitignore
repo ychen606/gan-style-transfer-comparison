@@ -2,3 +2,5 @@ __pycache__/
 data/
 cyclegan_models/
 cyclegan_outputs/
+munit_models/
+munit_outputs/
