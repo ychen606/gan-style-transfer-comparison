@@ -1,0 +1,3 @@
+count: 50.0
+cyclegan_total: 271.0
+munit_total: 195.6666666666667

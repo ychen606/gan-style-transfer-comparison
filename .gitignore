@@ -1,5 +1,8 @@
 __pycache__/
-data/
+data/testA/
+data/testB/
+data/trainA/
+data/trainB/
 cyclegan_models/
 cyclegan_outputs/
 munit_models/
