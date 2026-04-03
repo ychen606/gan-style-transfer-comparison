@@ -4,6 +4,17 @@
 https://www.kaggle.com/datasets/lyndialu/cyclegan-oilpainting-dataset.
 Download the dataset, and place the four subsets under data.
 
+## Files
+Dataset processing: dataset.py
+
+Architecture: cyclegan_model.py, munit_model.py
+
+Train: cyclegan_train.py, munit_train.py
+
+Test: cyclegan_test.py, munit_test.py, munit_test_paired.py
+
+Evaluate: evaluate.py
+
 ## Train
 Run cyclegan_train.py or munit_train.py.
 You can change epoch number by setting the EPOCH variable at the top.
